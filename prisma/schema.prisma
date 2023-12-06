@@ -9,3 +9,85 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id           String         @id @default(uuid())
+  name         String
+  email        String         @unique
+  password     String
+  userProfile  UserProfile?
+  BookUser     BookUser[]
+  UserComments UserComments[]
+}
+
+model UserProfile {
+  user         User          @relation(fields: [id], references: [id])
+  id           String        @unique
+  bio          String        @db.VarChar(255)
+  age          Int           @default(0)
+  ProfilePhoto ProfilePhoto?
+}
+
+model ProfilePhoto {
+  UserProfile   UserProfile @relation(fields: [userProfileId], references: [id])
+  userProfileId String      @unique
+  photoId       String      @unique
+  photoUrl      String
+}
+
+model Books {
+  id           String         @id @default(uuid())
+  title        String         @default("Untitled") @db.VarChar(56)
+  description  String         @db.VarChar(255)
+  BookUser     BookUser?
+  BookChapters BookChapters[]
+  BookNotes    BookNotes[]
+}
+
+model BookUser {
+  Book   Books  @relation(fields: [bookId], references: [id])
+  User   User   @relation(fields: [userId], references: [id])
+  bookId String @unique
+  userId String @unique
+}
+
+model Chapters {
+  id           String        @id @default(uuid())
+  title        String        @default("Untitled") @db.VarChar(56)
+  content      String
+  BookChapters BookChapters?
+}
+
+model BookChapters {
+  Book      Books    @relation(fields: [bookId], references: [id])
+  Chapter   Chapters @relation(fields: [chapterId], references: [id])
+  bookId    String
+  chapterId String   @unique
+}
+
+model Notes {
+  id        String     @id @default(uuid())
+  title     String     @default("Untitled") @db.VarChar(56)
+  content   String
+  BookNotes BookNotes?
+}
+
+model BookNotes {
+  Book   Books  @relation(fields: [bookId], references: [id])
+  Note   Notes  @relation(fields: [noteId], references: [id])
+  bookId String @unique
+  noteId String @unique
+}
+
+model Comments {
+  id           String        @id @default(uuid())
+  content      String
+  UserComments UserComments?
+}
+
+model UserComments {
+  User      User     @relation(fields: [userId], references: [id])
+  Comment   Comments @relation(fields: [commentId], references: [id])
+  userId    String
+  commentId String   @unique
+}
