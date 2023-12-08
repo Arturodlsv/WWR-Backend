@@ -14,4 +14,10 @@ router.post(
 
 router.post('/login', userControllers.getUser.bind(userControllers))
 
+router.patch(
+  '/update/:id',
+  upload.single('file'),
+  userControllers.updateUser.bind(userControllers)
+)
+
 export default router

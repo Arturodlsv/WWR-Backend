@@ -43,6 +43,27 @@ class UserControllers {
       })
     }
   }
+
+  async updateUser(req: Request, res: Response) {
+    try {
+      const { name, email, password, bio, photoId, photoUrl } = req.body
+      const { id } = req.params
+      const user = await this.userServices.updateUser({
+        id,
+        name,
+        email,
+        password,
+        biografy: bio,
+        photoId,
+        photoUrl
+      })
+      res.status(200).json(user)
+    } catch (e: Error | any) {
+      res.status(500).json({
+        message: e.message
+      })
+    }
+  }
 }
 
 export default UserControllers
