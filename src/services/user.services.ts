@@ -20,6 +20,13 @@ class UserServices {
             }
           }
         }
+      },
+      include: {
+        userProfile: {
+          include: {
+            ProfilePhoto: true
+          }
+        }
       }
     })
     return user

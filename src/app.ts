@@ -1,4 +1,3 @@
-console.clear()
 import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
@@ -9,6 +8,11 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cors())
 
+//importing routes
+import userRoutes from './routes/user.routes'
+app.use('/user', userRoutes)
+
+//declaring the port and initiating the server
 const port = process.env.APP_PORT || 5000
 
 app.listen(port, () => {
