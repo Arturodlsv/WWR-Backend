@@ -42,6 +42,14 @@ model Books {
   BookUser     BookUser?
   BookChapters BookChapters[]
   BookNotes    BookNotes[]
+  BooksImage   BooksImage?
+}
+
+model BooksImage {
+  Book     Books  @relation(fields: [bookId], references: [id])
+  bookId   String @unique
+  imageId  String
+  imageUrl String
 }
 
 model BookUser {
