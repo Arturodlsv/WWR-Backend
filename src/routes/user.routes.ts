@@ -12,4 +12,6 @@ router.post(
   userControllers.createUser.bind(userControllers)
 )
 
+router.post('/login', userControllers.getUser.bind(userControllers))
+
 export default router

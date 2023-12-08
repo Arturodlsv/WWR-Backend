@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import { Request, Response } from 'express'
 import UserServices from '../services/user.services'
+import Jwt from 'jsonwebtoken'
 const prisma = new PrismaClient()
 
 class UserControllers {
@@ -21,6 +22,25 @@ class UserControllers {
       res.status(201).json(user)
     } catch (e: Error | any) {
       res.status(500).json(e.message)
+    }
+  }
+
+  async getUser(req: Request, res: Response) {
+    try {
+      const { email, password } = req.body
+      const user = await this.userServices.getUser(email, password)
+      const token = Jwt.sign(
+        {
+          id: user?.id
+        },
+        process.env.JWT_SECRET as string
+      )
+      res.cookie('token', token, { httpOnly: true, sameSite: 'strict' })
+      res.status(200).json(user)
+    } catch (e: Error | any) {
+      res.status(500).json({
+        message: e
+      })
     }
   }
 }
