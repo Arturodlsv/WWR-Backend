@@ -39,7 +39,7 @@ class UserControllers {
       res.status(200).json(user)
     } catch (e: Error | any) {
       res.status(500).json({
-        message: e
+        message: e.message
       })
     }
   }

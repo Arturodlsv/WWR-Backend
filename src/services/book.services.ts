@@ -19,7 +19,7 @@ class BookServices {
                 imageUrl: data.imageUrl
               }
             }
-          }, 
+          },
           include: {
             BooksImage: true
           }
@@ -41,6 +41,30 @@ class BookServices {
       throw error
     }
     return result
+  }
+  async getBookById(userId: string, bookId: string) {
+    try {
+      const book = await prisma.bookUser.findUnique({
+        where: {
+          bookId: bookId,
+          userId: userId
+        },
+        include: {
+          Book: {
+            include: {
+              BooksImage: true
+            }
+          }
+        }
+      })
+      if (!book) {
+        throw new Error('Book not found')
+      }
+      return book
+    } catch (error) {
+      console.error('Transaction error:', error)
+      throw error
+    }
   }
 }
 

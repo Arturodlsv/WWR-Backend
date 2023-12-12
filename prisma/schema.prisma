@@ -24,7 +24,6 @@ model UserProfile {
   user         User          @relation(fields: [id], references: [id])
   id           String        @unique
   bio          String        @default("") @db.VarChar(255)
-  age          Int           @default(0)
   ProfilePhoto ProfilePhoto?
 }
 

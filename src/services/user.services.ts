@@ -49,7 +49,7 @@ class UserServices {
       }
     })
     if (!user) {
-      return null
+      throw new Error('User not found')
     }
     const validPassword = await bcrypt.compare(password, user.password)
     if (!validPassword) {

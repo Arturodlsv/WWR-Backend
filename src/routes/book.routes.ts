@@ -14,4 +14,10 @@ router.post(
   bookControllers.createBook.bind(bookControllers)
 )
 
+router.get(
+  '/get/:id',
+  AuthMiddleware,
+  bookControllers.getBookById.bind(bookControllers)
+)
+
 export default router
