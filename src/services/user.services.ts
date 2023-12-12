@@ -1,10 +1,16 @@
 import { PrismaClient } from '@prisma/client'
 import { TUser } from '../types/user.types'
+import CloudServices from './cloudinary.services'
 import bcrypt from 'bcrypt'
 const prisma = new PrismaClient()
 
 class UserServices {
   insertUser = async (data: TUser) => {
+    const cloudServices = new CloudServices()
+    if (data.file) {
+      const result = await cloudServices.uploadImage(data.file)
+      data.file = result
+    }
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(data.password, salt)
     const user = await prisma.user.create({
@@ -17,8 +23,10 @@ class UserServices {
             bio: data.biografy,
             ProfilePhoto: {
               create: {
-                photoId: data.photoId,
-                photoUrl: data.photoUrl
+                photoId: data.file?.public_id as string || '',
+                photoUrl:
+                  data.file?.secure_url as string ||
+                  'https://avatarfiles.alphacoders.com/370/370222.png'
               }
             }
           }
@@ -83,8 +91,8 @@ class UserServices {
             bio: data.biografy,
             ProfilePhoto: {
               update: {
-                photoId: data.photoId,
-                photoUrl: data.photoUrl
+                photoId: '',
+                photoUrl: ''
               }
             }
           }

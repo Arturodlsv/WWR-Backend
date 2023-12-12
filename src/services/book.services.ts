@@ -1,6 +1,5 @@
 import { PrismaClient } from '@prisma/client'
 import { TBook } from '../types/book.types'
-import e from 'express'
 const prisma = new PrismaClient()
 
 class BookServices {
@@ -41,6 +40,24 @@ class BookServices {
       throw error
     }
     return result
+  }
+
+  async upadteBook(data: TBook) {
+    try {
+      const book = await prisma.books.update({
+        where: {
+          id: data.id
+        },
+        data: {
+          title: data.title,
+          description: data.description
+        }
+      })
+      return book
+    } catch (error) {
+      console.error('Transaction error:', error)
+      throw error
+    }
   }
   async getBookById(userId: string, bookId: string) {
     try {

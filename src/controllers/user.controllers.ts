@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client'
 import { Request, Response } from 'express'
 import UserServices from '../services/user.services'
 import Jwt from 'jsonwebtoken'
+import CloudServices from '../services/cloudinary.services'
 const prisma = new PrismaClient()
 
 class UserControllers {
@@ -10,14 +11,15 @@ class UserControllers {
   }
   async createUser(req: Request, res: Response) {
     try {
-      const { name, email, password, bio, photoId, photoUrl } = req.body
+      const { file } = req
+      const { name, email, password, bio } = req.body
+      console.log(req.body)
       const user = await this.userServices.insertUser({
         name,
         email,
         password,
         biografy: bio,
-        photoId,
-        photoUrl
+        file
       })
       res.status(201).json(user)
     } catch (e: Error | any) {
@@ -53,9 +55,7 @@ class UserControllers {
         name,
         email,
         password,
-        biografy: bio,
-        photoId,
-        photoUrl
+        biografy: bio
       })
       res.status(200).json(user)
     } catch (e: Error | any) {
