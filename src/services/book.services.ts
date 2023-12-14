@@ -1,11 +1,26 @@
 import { PrismaClient } from '@prisma/client'
+import fs from 'fs'
 import { TBook } from '../types/book.types'
+import CloudServices from './cloudinary.services'
 const prisma = new PrismaClient()
 
 class BookServices {
   async createBook(data: TBook) {
     let result
+    const cloudServices = new CloudServices()
+    fs.unlink(data.file?.path, (err) => {
+      if (err) {
+        console.error(err)
+        return
+      }
+    })
+    if (data.file) {
+      const result = await cloudServices.uploadImage(data.file)
+      data.file = result
+    }
     try {
+      let publicId = data.file?.public_id
+      let imageUrl = data.file?.secure_url
       result = await prisma.$transaction(async (tx) => {
         // Create the book inside of the transaction
         const book = await tx.books.create({
@@ -14,8 +29,10 @@ class BookServices {
             description: data.description,
             BooksImage: {
               create: {
-                imageId: data.imageUrl,
-                imageUrl: data.imageUrl
+                imageId: publicId || '',
+                imageUrl:
+                  imageUrl ||
+                  'https://avatarfiles.alphacoders.com/370/370222.png'
               }
             }
           },
