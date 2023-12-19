@@ -39,6 +39,16 @@ class BookControllers {
     }
   }
 
+  async getAllBooks(req: Request | any, res: Response) {
+    try {
+      const { id } = req.userId
+      const books = await this.bookServices.getBooksByUserId(id)
+      res.status(200).json({ books })
+    } catch (e: Error | any) {
+      res.status(500).json(e.message)
+    }
+  }
+
   async getBookById(req: Request | any, res: Response) {
     try {
       const { id } = req.userId

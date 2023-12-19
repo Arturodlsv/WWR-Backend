@@ -8,12 +8,6 @@ const prisma = new PrismaClient()
 class UserServices {
   insertUser = async (data: TUser) => {
     const cloudServices = new CloudServices()
-    fs.unlink(data.file?.path, (err) => {
-      if (err) {
-        console.error(err)
-        return
-      }
-    })
     if (data.file) {
       const result = await cloudServices.uploadImage(data.file)
       data.file = result

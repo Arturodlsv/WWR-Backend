@@ -12,7 +12,7 @@ router.post(
   userControllers.createUser.bind(userControllers)
 )
 
-router.post('/login', userControllers.getUser.bind(userControllers))
+router.post('/login', upload.none(), userControllers.getUser.bind(userControllers))
 
 router.patch(
   '/update/:id',
