@@ -2,6 +2,7 @@ import { UploadApiResponse } from 'cloudinary'
 
 type TBook = {
   id?: string
+  bookId?: string
   userId: string
   title: string
   description: string

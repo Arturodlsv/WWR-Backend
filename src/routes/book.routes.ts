@@ -14,6 +14,7 @@ router.post(
   bookControllers.createBook.bind(bookControllers)
 )
 
+router.patch('/update/:id', AuthMiddleware, bookControllers.updateBook.bind(bookControllers))
 router.get(
   '/get/:id',
   AuthMiddleware,

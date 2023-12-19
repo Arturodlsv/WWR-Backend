@@ -1,9 +1,16 @@
+import fs from 'fs'
 import { v2 as cloudinary } from 'cloudinary'
 
 cloudinary.config(process.env.CLOUDINARY_URL as string)
 
 class CloudServices {
   async uploadImage(file: any) {
+    fs.unlink(file?.path, (err) => {
+      if (err) {
+        console.error(err)
+        return
+      }
+    })
     try {
       const result = await cloudinary.uploader.upload(file.path, {
         folder: 'WWR'

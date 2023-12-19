@@ -1,5 +1,4 @@
 import { PrismaClient } from '@prisma/client'
-import fs from 'fs'
 import { TBook } from '../types/book.types'
 import CloudServices from './cloudinary.services'
 const prisma = new PrismaClient()
@@ -8,12 +7,6 @@ class BookServices {
   async createBook(data: TBook) {
     let result
     const cloudServices = new CloudServices()
-    fs.unlink(data.file?.path, (err) => {
-      if (err) {
-        console.error(err)
-        return
-      }
-    })
     if (data.file) {
       const result = await cloudServices.uploadImage(data.file)
       data.file = result
@@ -59,15 +52,20 @@ class BookServices {
     return result
   }
 
-  async upadteBook(data: TBook) {
+  async updateBook(data: TBook) {
     try {
-      const book = await prisma.books.update({
+      const book = await prisma.bookUser.update({
         where: {
-          id: data.id
+          bookId: data.bookId,
+          userId: data.userId
         },
         data: {
-          title: data.title,
-          description: data.description
+          Book: {
+            update: {
+              title: data.title,
+              description: data.description
+            }
+          }
         }
       })
       return book
