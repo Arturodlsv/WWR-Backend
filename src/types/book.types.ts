@@ -16,6 +16,8 @@ type TBook = {
         filename: string
         path: string
         size: number
+        public_id: string
+        secure_url: string
       }
     | UploadApiResponse
 }

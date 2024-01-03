@@ -4,52 +4,51 @@ import CloudServices from './cloudinary.services'
 const prisma = new PrismaClient()
 
 class BookServices {
-  async createBook(data: TBook) {
+  createBook = async (data: TBook) => {
     let result
     const cloudServices = new CloudServices()
     if (data.file) {
-      console.log("If if is working correctly")
-      const welcoems = await cloudServices.uploadImage(data.file)
-      console.log(welcoems)
-      console.log("result should appear behind this")
+      const result = await cloudServices.uploadImage(data.file)
+      console.log('If it is working correctly')
+      console.log('result should appear behind this')
       data.file = result
     }
+    console.log(data.file)
     try {
-      return data.file
-      // result = await prisma.$transaction(async (tx) => {
-      //   // Create the book inside of the transaction
-      //   const book = await tx.books.create({
-      //     data: {
-      //       title: data.title,
-      //       description: data.description,
-      //       BooksImage: {
-      //         create: {
-      //           imageId: (data.file?.public_id as string) || '',
-      //           imageUrl:
-      //             (data.file?.secure_url as string) ||
-      //             'https://avatarfiles.alphacoders.com/370/370222.png'
-      //         }
-      //       }
-      //     },
-      //     include: {
-      //       BooksImage: true
-      //     }
-      //   })
+      result = await prisma.$transaction(async (tx) => {
+        // Create the book inside of the transaction
+        const book = await tx.books.create({
+          data: {
+            title: data.title,
+            description: data.description,
+            BooksImage: {
+              create: {
+                imageId: data.file?.public_id || '',
+                imageUrl:
+                  data.file?.secure_url ||
+                  'https://avatarfiles.alphacoders.com/370/370222.png'
+              }
+            }
+          },
+          include: {
+            BooksImage: true
+          }
+        })
 
-      //   // Create a book associated with the user inside the same transaction
-      //   const insertBookUser = await tx.bookUser.create({
-      //     data: {
-      //       userId: data.userId,
-      //       bookId: book.id
-      //     }
-      //   })
+        // Create a book associated with the user inside the same transaction
+        const insertBookUser = await tx.bookUser.create({
+          data: {
+            userId: data.userId,
+            bookId: book.id
+          }
+        })
 
-      //   return { book, insertBookUser }
-      // })
+        return { book, insertBookUser }
+      })
     } catch (error) {
       // Handle transaction error
-      // console.error('Transaction error:', error)
-      // throw error
+      console.error('Transaction error:', error)
+      throw error
     }
     return result
   }

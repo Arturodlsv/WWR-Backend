@@ -1,7 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import { TUser } from '../types/user.types'
 import CloudServices from './cloudinary.services'
-import fs from 'fs'
 import bcrypt from 'bcrypt'
 const prisma = new PrismaClient()
 

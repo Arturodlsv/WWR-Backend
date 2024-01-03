@@ -5,12 +5,6 @@ cloudinary.config(process.env.CLOUDINARY_URL as string)
 
 class CloudServices {
   async uploadImage(file: any) {
-    fs.unlink(file?.path, (err) => {
-      if (err) {
-        console.error(err)
-        return
-      }
-    })
     try {
       const result = await cloudinary.uploader.upload(file.path, {
         folder: 'WWR'
@@ -18,6 +12,12 @@ class CloudServices {
       if (!result) {
         throw new Error('Error uploading image')
       }
+      fs.unlink(file?.path, (err) => {
+        if (err) {
+          console.error(err)
+          return
+        }
+      })
       return result
     } catch (e: Error | any) {
       throw new Error(e.message)
