@@ -55,7 +55,7 @@ model BookUser {
   Book   Books  @relation(fields: [bookId], references: [id])
   User   User   @relation(fields: [userId], references: [id])
   bookId String @unique
-  userId String @unique
+  userId String
 }
 
 model Chapters {

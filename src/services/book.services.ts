@@ -1,10 +1,19 @@
 import { PrismaClient } from '@prisma/client'
 import { TBook } from '../types/book.types'
+import CloudServices from './cloudinary.services'
 const prisma = new PrismaClient()
 
 class BookServices {
-  async createBook(data: TBook) {
+  createBook = async (data: TBook) => {
     let result
+    const cloudServices = new CloudServices()
+    if (data.file) {
+      const result = await cloudServices.uploadImage(data.file)
+      console.log('If it is working correctly')
+      console.log('result should appear behind this')
+      data.file = result
+    }
+    console.log(data.file)
     try {
       result = await prisma.$transaction(async (tx) => {
         // Create the book inside of the transaction
@@ -14,8 +23,10 @@ class BookServices {
             description: data.description,
             BooksImage: {
               create: {
-                imageId: data.imageUrl,
-                imageUrl: data.imageUrl
+                imageId: data.file?.public_id || '',
+                imageUrl:
+                  data.file?.secure_url ||
+                  'https://avatarfiles.alphacoders.com/370/370222.png'
               }
             }
           },
@@ -42,18 +53,44 @@ class BookServices {
     return result
   }
 
-  async upadteBook(data: TBook) {
+  async updateBook(data: TBook) {
     try {
-      const book = await prisma.books.update({
+      const book = await prisma.bookUser.update({
         where: {
-          id: data.id
+          bookId: data.bookId,
+          userId: data.userId
         },
         data: {
-          title: data.title,
-          description: data.description
+          Book: {
+            update: {
+              title: data.title,
+              description: data.description
+            }
+          }
         }
       })
       return book
+    } catch (error) {
+      console.error('Transaction error:', error)
+      throw error
+    }
+  }
+
+  async getBooksByUserId(userId: string) {
+    try {
+      const books = await prisma.bookUser.findMany({
+        where: {
+          userId
+        },
+        include: {
+          Book: {
+            include: {
+              BooksImage: true
+            }
+          }
+        }
+      })
+      return books
     } catch (error) {
       console.error('Transaction error:', error)
       throw error

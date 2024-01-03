@@ -1,3 +1,4 @@
+import fs from 'fs'
 import { v2 as cloudinary } from 'cloudinary'
 
 cloudinary.config(process.env.CLOUDINARY_URL as string)
@@ -11,6 +12,12 @@ class CloudServices {
       if (!result) {
         throw new Error('Error uploading image')
       }
+      fs.unlink(file?.path, (err) => {
+        if (err) {
+          console.error(err)
+          return
+        }
+      })
       return result
     } catch (e: Error | any) {
       throw new Error(e.message)

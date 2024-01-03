@@ -13,8 +13,10 @@ app.use(cors())
 //importing routes
 import userRoutes from './routes/user.routes'
 import bookRoutes from './routes/book.routes'
+import chapterRoutes from './routes/chapter.routes'
 app.use('/user', userRoutes)
 app.use('/book', bookRoutes)
+app.use('/chapter', chapterRoutes)
 
 //declaring the port and initiating the server
 const port = process.env.APP_PORT || 5000
